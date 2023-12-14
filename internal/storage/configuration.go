@@ -4,11 +4,12 @@ import (
 	"database/sql"
 
 	_ "github.com/lib/pq"
+	cfg "github.com/unm4sked/config-service/internal/configuration"
 )
 
 type ConfigurationRepository interface {
-	CreateConfiguration(int) error
-	GetConfiguration(string) string
+	CreateConfiguration(cfg.Configuration) error
+	GetConfiguration(string) (cfg.Configuration, error)
 }
 
 type PostgresConfigurationRepository struct {
