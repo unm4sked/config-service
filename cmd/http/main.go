@@ -24,9 +24,10 @@ func main() {
 	fmt.Printf("%v\n", store)
 
 	app := fiber.New()
+	api := app.Group("/api").Group("/v1")
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
+	api.Get("configurations", func(c *fiber.Ctx) error {
+		return c.SendString("ok")
 	})
 
 	log.Fatal(app.Listen(":3000"))
