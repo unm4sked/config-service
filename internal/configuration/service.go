@@ -1,7 +1,9 @@
 package configuration
 
+import "github.com/google/uuid"
+
 type Service interface {
-	CreateConfiguration()
+	CreateConfiguration(name string) (string, error)
 	GetConfigutation(Id string)
 	GetConfigurations()
 	UpdateConfiguration(Id string)
@@ -18,8 +20,13 @@ func NewService(repository Repository) Service {
 	}
 }
 
-func (s *service) CreateConfiguration() {
-	s.repository.CreateConfiguration()
+func (s *service) CreateConfiguration(name string) (string, error) {
+	id := uuid.NewString()
+	err := s.repository.CreateConfiguration(id, name)
+	if err != nil {
+		return "", err
+	}
+	return id, nil
 }
 func (s *service) GetConfigutation(Id string) {
 	s.repository.GetConfiguration(Id)

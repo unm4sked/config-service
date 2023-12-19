@@ -3,10 +3,13 @@ package configuration
 import (
 	"database/sql"
 	"fmt"
+	"log"
 )
 
+const ConfigurationTableName = "configurations"
+
 type Repository interface {
-	CreateConfiguration()
+	CreateConfiguration(id string, name string) error
 	GetConfiguration(Id string)
 	GetConfigurations()
 	DeleteConfiguration(Id string)
@@ -14,17 +17,23 @@ type Repository interface {
 }
 
 type repository struct {
-	Db *sql.DB
+	db *sql.DB
 }
 
 func NewRepository(db *sql.DB) Repository {
 	return &repository{
-		Db: db,
+		db: db,
 	}
 }
 
-func (r *repository) CreateConfiguration() {
-	// TODO
+func (r *repository) CreateConfiguration(id string, name string) error {
+	_, err := r.db.Exec(`INSERT INTO configurations ("id", "name") VALUES ($1,$2)`, id, name)
+	if err != nil {
+		log.Printf("An error occured while executing query: %v\n", err)
+		return err
+	}
+
+	return nil
 }
 
 func (r *repository) GetConfiguration(Id string) {
