@@ -9,6 +9,6 @@ type ConfigurationCreatedPayload struct {
 }
 
 type Configuration struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	Id   string `json:"id" db:"id"`
+	Name string `json:"name" db:"name"`
 }

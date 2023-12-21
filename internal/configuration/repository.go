@@ -40,10 +40,12 @@ func (r *repository) CreateConfiguration(id string, name string) error {
 
 func (r *repository) GetConfiguration(Id string) (entities.Configuration, error) {
 	rows, err := r.db.Query(`SELECT * FROM configurations WHERE id=$1 LIMIT 1`, Id)
+	defer rows.Close()
 	if err != nil {
 		log.Printf("An error occured while executing query: %v\n", err)
 		return nil, err
 	}
+
 }
 
 func (r *repository) GetConfigurations() {
