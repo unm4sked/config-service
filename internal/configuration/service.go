@@ -1,10 +1,13 @@
 package configuration
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"github.com/unm4sked/config-service/internal/entities"
+)
 
 type Service interface {
 	CreateConfiguration(name string) (string, error)
-	GetConfigutation(Id string)
+	GetConfiguration(Id string) (entities.Configuration, error)
 	GetConfigurations()
 	UpdateConfiguration(Id string)
 	DeleteConfiguration(Id string)
@@ -28,8 +31,8 @@ func (s *service) CreateConfiguration(name string) (string, error) {
 	}
 	return id, nil
 }
-func (s *service) GetConfigutation(Id string) {
-	s.repository.GetConfiguration(Id)
+func (s *service) GetConfiguration(Id string) (entities.Configuration, error) {
+	return s.repository.GetConfiguration(Id)
 }
 func (s *service) GetConfigurations() {
 	s.repository.GetConfigurations()

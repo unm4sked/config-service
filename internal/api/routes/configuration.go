@@ -7,9 +7,12 @@ import (
 )
 
 func ConfigurationRouter(app fiber.Router, service configuration.Service) {
-	app.Get("/configurations", func(c *fiber.Ctx) error {
-		service.GetConfigurations()
-		return c.SendString("configurations")
+	app.Get("/configuration/:id", func(c *fiber.Ctx) error {
+		config, err := service.GetConfiguration(c.Params("id"))
+		if err != nil {
+			return fiber.ErrNotFound
+		}
+		return c.JSON(config)
 	})
 	app.Post(("/configurations"), func(c *fiber.Ctx) error {
 		payload := new(entities.CreateConfigurationPayload)

@@ -12,7 +12,7 @@ const ConfigurationTableName = "configurations"
 
 type Repository interface {
 	CreateConfiguration(id string, name string) error
-	GetConfiguration(Id string)
+	GetConfiguration(Id string) (entities.Configuration, error)
 	GetConfigurations()
 	DeleteConfiguration(Id string)
 	UpdateConfiguration(Id string)
@@ -39,13 +39,16 @@ func (r *repository) CreateConfiguration(id string, name string) error {
 }
 
 func (r *repository) GetConfiguration(Id string) (entities.Configuration, error) {
-	rows, err := r.db.Query(`SELECT * FROM configurations WHERE id=$1 LIMIT 1`, Id)
-	defer rows.Close()
+	row := r.db.QueryRow(`SELECT * FROM configurations WHERE id=$1 LIMIT 1`, Id)
+
+	var configuration = entities.Configuration{}
+	err := row.Scan(&configuration.Id, &configuration.Name)
 	if err != nil {
 		log.Printf("An error occured while executing query: %v\n", err)
-		return nil, err
+		return entities.Configuration{}, err
 	}
 
+	return configuration, nil
 }
 
 func (r *repository) GetConfigurations() {
