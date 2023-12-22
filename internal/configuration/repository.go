@@ -2,7 +2,6 @@ package configuration
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 
 	"github.com/unm4sked/config-service/internal/entities"
@@ -13,7 +12,7 @@ const ConfigurationTableName = "configurations"
 type Repository interface {
 	CreateConfiguration(id string, name string) error
 	GetConfiguration(Id string) (entities.Configuration, error)
-	GetConfigurations()
+	GetConfigurations() ([]entities.Configuration, error)
 	DeleteConfiguration(Id string)
 	UpdateConfiguration(Id string)
 }
@@ -40,7 +39,6 @@ func (r *repository) CreateConfiguration(id string, name string) error {
 
 func (r *repository) GetConfiguration(Id string) (entities.Configuration, error) {
 	row := r.db.QueryRow(`SELECT * FROM configurations WHERE id=$1 LIMIT 1`, Id)
-
 	var configuration = entities.Configuration{}
 	err := row.Scan(&configuration.Id, &configuration.Name)
 	if err != nil {
@@ -51,9 +49,21 @@ func (r *repository) GetConfiguration(Id string) (entities.Configuration, error)
 	return configuration, nil
 }
 
-func (r *repository) GetConfigurations() {
-	fmt.Println("GetConfigurations invoked")
-	// TODO
+func (r *repository) GetConfigurations() ([]entities.Configuration, error) {
+	rows, err := r.db.Query(`SELECT * FROM configurations`)
+	configs := []entities.Configuration{}
+	if err != nil {
+		return configs, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		config := entities.Configuration{}
+		rows.Scan(&config.Id, &config.Name)
+		configs = append(configs, config)
+	}
+
+	return configs, nil
 }
 
 func (r *repository) UpdateConfiguration(Id string) {

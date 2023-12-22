@@ -8,7 +8,7 @@ import (
 type Service interface {
 	CreateConfiguration(name string) (string, error)
 	GetConfiguration(Id string) (entities.Configuration, error)
-	GetConfigurations()
+	GetConfigurations() ([]entities.Configuration, error)
 	UpdateConfiguration(Id string)
 	DeleteConfiguration(Id string)
 }
@@ -34,8 +34,8 @@ func (s *service) CreateConfiguration(name string) (string, error) {
 func (s *service) GetConfiguration(Id string) (entities.Configuration, error) {
 	return s.repository.GetConfiguration(Id)
 }
-func (s *service) GetConfigurations() {
-	s.repository.GetConfigurations()
+func (s *service) GetConfigurations() ([]entities.Configuration, error) {
+	return s.repository.GetConfigurations()
 }
 func (s *service) UpdateConfiguration(Id string) {
 	s.repository.UpdateConfiguration(Id)
