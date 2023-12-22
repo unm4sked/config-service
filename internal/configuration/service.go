@@ -30,7 +30,7 @@ func (s *service) CreateConfiguration(name string) (entities.ConfigurationCreate
 	if err != nil {
 		return configurationCreated, err
 	}
-	return entities.ConfigurationCreatedPayload{id}, nil
+	return entities.ConfigurationCreatedPayload{Id: id}, nil
 }
 func (s *service) GetConfiguration(Id string) (entities.Configuration, error) {
 	return s.repository.GetConfiguration(Id)
