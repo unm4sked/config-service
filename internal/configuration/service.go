@@ -6,7 +6,7 @@ import (
 )
 
 type Service interface {
-	CreateConfiguration(name string) (string, error)
+	CreateConfiguration(name string) (entities.ConfigurationCreatedPayload, error)
 	GetConfiguration(Id string) (entities.Configuration, error)
 	GetConfigurations() ([]entities.Configuration, error)
 	UpdateConfiguration(Id string)
@@ -23,13 +23,14 @@ func NewService(repository Repository) Service {
 	}
 }
 
-func (s *service) CreateConfiguration(name string) (string, error) {
+func (s *service) CreateConfiguration(name string) (entities.ConfigurationCreatedPayload, error) {
 	id := uuid.NewString()
 	err := s.repository.CreateConfiguration(id, name)
+	configurationCreated := entities.ConfigurationCreatedPayload{}
 	if err != nil {
-		return "", err
+		return configurationCreated, err
 	}
-	return id, nil
+	return entities.ConfigurationCreatedPayload{id}, nil
 }
 func (s *service) GetConfiguration(Id string) (entities.Configuration, error) {
 	return s.repository.GetConfiguration(Id)

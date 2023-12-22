@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/unm4sked/config-service/internal/api/response"
 	"github.com/unm4sked/config-service/internal/configuration"
 	"github.com/unm4sked/config-service/internal/entities"
 )
@@ -12,25 +13,27 @@ func ConfigurationRouter(app fiber.Router, service configuration.Service) {
 		if err != nil {
 			return fiber.ErrNotFound
 		}
-		return c.JSON(config)
+
+		return c.JSON(response.NewSuccessResponseBody[entities.Configuration](config))
 	})
+
 	app.Get("/configurations", func(c *fiber.Ctx) error {
 		configs, err := service.GetConfigurations()
 		if err != nil {
 			return fiber.ErrInternalServerError
 		}
-		return c.JSON(configs)
+		return c.JSON(response.NewSuccessResponseBody[[]entities.Configuration](configs))
 	})
+
 	app.Post(("/configurations"), func(c *fiber.Ctx) error {
 		payload := new(entities.CreateConfigurationPayload)
 		if err := c.BodyParser(payload); err != nil {
 			return err
 		}
-		id, err := service.CreateConfiguration(payload.Name)
+		config, err := service.CreateConfiguration(payload.Name)
 		if err != nil {
 			return err
 		}
-
-		return c.JSON(&entities.ConfigurationCreatedPayload{Id: id})
+		return c.JSON(response.NewSuccessResponseBody[entities.ConfigurationCreatedPayload](config))
 	})
 }
