@@ -4,7 +4,7 @@ type CreateConfigurationPayload struct {
 	Name string `json:"name"`
 }
 
-type ConfigurationCreatedPayload struct {
+type ConfigurationIdPayload struct {
 	Id string `json:"id"`
 }
 

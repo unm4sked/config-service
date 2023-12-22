@@ -6,11 +6,11 @@ import (
 )
 
 type Service interface {
-	CreateConfiguration(name string) (entities.ConfigurationCreatedPayload, error)
+	CreateConfiguration(name string) (entities.ConfigurationIdPayload, error)
 	GetConfiguration(Id string) (entities.Configuration, error)
 	GetConfigurations() ([]entities.Configuration, error)
-	UpdateConfiguration(Id string)
-	DeleteConfiguration(Id string)
+	UpdateConfiguration(Id string) error
+	DeleteConfiguration(Id string) error
 }
 
 type service struct {
@@ -23,14 +23,14 @@ func NewService(repository Repository) Service {
 	}
 }
 
-func (s *service) CreateConfiguration(name string) (entities.ConfigurationCreatedPayload, error) {
+func (s *service) CreateConfiguration(name string) (entities.ConfigurationIdPayload, error) {
 	id := uuid.NewString()
 	err := s.repository.CreateConfiguration(id, name)
-	configurationCreated := entities.ConfigurationCreatedPayload{}
+	configurationCreated := entities.ConfigurationIdPayload{}
 	if err != nil {
 		return configurationCreated, err
 	}
-	return entities.ConfigurationCreatedPayload{Id: id}, nil
+	return entities.ConfigurationIdPayload{Id: id}, nil
 }
 func (s *service) GetConfiguration(Id string) (entities.Configuration, error) {
 	return s.repository.GetConfiguration(Id)
@@ -38,9 +38,9 @@ func (s *service) GetConfiguration(Id string) (entities.Configuration, error) {
 func (s *service) GetConfigurations() ([]entities.Configuration, error) {
 	return s.repository.GetConfigurations()
 }
-func (s *service) UpdateConfiguration(Id string) {
-	s.repository.UpdateConfiguration(Id)
+func (s *service) UpdateConfiguration(Id string) error {
+	return s.repository.UpdateConfiguration(Id)
 }
-func (s *service) DeleteConfiguration(Id string) {
-	s.repository.DeleteConfiguration(Id)
+func (s *service) DeleteConfiguration(Id string) error {
+	return s.repository.DeleteConfiguration(Id)
 }

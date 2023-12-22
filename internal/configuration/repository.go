@@ -13,8 +13,8 @@ type Repository interface {
 	CreateConfiguration(id string, name string) error
 	GetConfiguration(Id string) (entities.Configuration, error)
 	GetConfigurations() ([]entities.Configuration, error)
-	DeleteConfiguration(Id string)
-	UpdateConfiguration(Id string)
+	DeleteConfiguration(Id string) error
+	UpdateConfiguration(Id string) error
 }
 
 type repository struct {
@@ -66,10 +66,14 @@ func (r *repository) GetConfigurations() ([]entities.Configuration, error) {
 	return configs, nil
 }
 
-func (r *repository) UpdateConfiguration(Id string) {
-	// TODO
+func (r *repository) UpdateConfiguration(Id string) error {
+	return nil
 }
 
-func (r *repository) DeleteConfiguration(Id string) {
-	// TODO
+func (r *repository) DeleteConfiguration(Id string) error {
+	_, err := r.db.Exec("DELETE FROM configurations WHERE id=$1", Id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
