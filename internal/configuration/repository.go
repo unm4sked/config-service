@@ -11,10 +11,10 @@ const ConfigurationTableName = "configurations"
 
 type Repository interface {
 	CreateConfiguration(id string, name string) error
-	GetConfiguration(Id string) (entities.Configuration, error)
+	GetConfiguration(id string) (entities.Configuration, error)
 	GetConfigurations() ([]entities.Configuration, error)
-	DeleteConfiguration(Id string) error
-	UpdateConfiguration(Id string) error
+	DeleteConfiguration(id string) error
+	UpdateConfiguration(config entities.Configuration) error
 }
 
 type repository struct {
@@ -37,8 +37,8 @@ func (r *repository) CreateConfiguration(id string, name string) error {
 	return nil
 }
 
-func (r *repository) GetConfiguration(Id string) (entities.Configuration, error) {
-	row := r.db.QueryRow(`SELECT * FROM configurations WHERE id=$1 LIMIT 1`, Id)
+func (r *repository) GetConfiguration(id string) (entities.Configuration, error) {
+	row := r.db.QueryRow(`SELECT * FROM configurations WHERE id=$1 LIMIT 1`, id)
 	var configuration = entities.Configuration{}
 	err := row.Scan(&configuration.Id, &configuration.Name)
 	if err != nil {
@@ -66,7 +66,12 @@ func (r *repository) GetConfigurations() ([]entities.Configuration, error) {
 	return configs, nil
 }
 
-func (r *repository) UpdateConfiguration(Id string) error {
+func (r *repository) UpdateConfiguration(config entities.Configuration) error {
+
+	_, err := r.db.Exec(`UPDATE configurations SET name=$1 WHERE id=$2`, config.Name, config.Id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

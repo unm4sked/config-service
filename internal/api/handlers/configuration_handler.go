@@ -69,7 +69,20 @@ func DeleteConfiguration(service configuration.Service) fiber.Handler {
 
 func UpdateConfiguration(service configuration.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		// id := c.Params("id")
-		return c.JSON(fiber.Map{})
+		config := new(entities.Configuration)
+		config.Id = c.Params("id")
+		if err := c.BodyParser(config); err != nil {
+			errMessages := []string{err.Error()}
+			response := response.NewFailureResponseBody(errMessages)
+			c.SendStatus(422)
+			return c.JSON(response)
+		}
+		if err := service.UpdateConfiguration(*config); err != nil {
+			errMessages := []string{err.Error()}
+			response := response.NewFailureResponseBody(errMessages)
+			c.SendStatus(422)
+			return c.JSON(response)
+		}
+		return c.JSON(response.NewSuccessResponseBody[entities.Configuration](*config))
 	}
 }
